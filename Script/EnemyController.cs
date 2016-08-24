@@ -17,7 +17,6 @@ public class EnemyController : MonoBehaviour {
 
     float speed = 0.005F;
 
-	// Use this for initialization
 	void Start () {
         anim = character.GetComponent<Animation>();
         int i = 0;
@@ -79,7 +78,6 @@ public class EnemyController : MonoBehaviour {
                 anim.Play(animationNames[3]);
                 StartCoroutine(wait());
                 enemy1Health--;
-                Debug.Log("Health: " + enemy1Health);
         }
     }
 

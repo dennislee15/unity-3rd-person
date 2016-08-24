@@ -3,22 +3,21 @@ using System.Collections;
 
 public class characterController : MonoBehaviour {
     public float speed;
-    public float rotateSpeed = 3.0F;
+    public float rotateSpeed;
+    public float knockback = 300.0F;
+    public int enemy1Damage;
 
     public GameObject character;
     string[] animationNames = new string[5];
     Animation anim;
     CharacterController controller;
-    Rigidbody body;
-    Vector3 impact = Vector3.zero;
-    public int mass;
+    public playerHealth health;
 
     // Use this for initialization
     void Start()
     {
         anim = character.GetComponent<Animation>();
         controller = GetComponent<CharacterController>();
-        body = GetComponent<Rigidbody>();
 
         int i = 0;
         string temp;
@@ -26,9 +25,9 @@ public class characterController : MonoBehaviour {
         {
             temp = state.name;
             animationNames[i] = temp;
-            //Debug.Log(state.name);
             i++;
         }
+        health.Start();
     }
 
 
@@ -44,17 +43,20 @@ public class characterController : MonoBehaviour {
             anim.Play(animationNames[4]);
             speed = 50F;
         }
-        if (Input.GetKeyUp(KeyCode.W))
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
             anim.Play(animationNames[0]);
         else if (Input.GetKeyUp(KeyCode.LeftShift))
             speed = 50f;
         if (Input.GetKeyDown(KeyCode.Space))
-        {
-            anim.PlayQueued( animationNames[1] );
-            StartCoroutine(WaitForAnimation(anim));
-            anim.Play(animationNames[1]);
-        }
+            playAnimation(1);
         moveCharacter(speed);
+    }
+
+    void playAnimation(int idx)
+    {
+        anim.PlayQueued(animationNames[idx]);
+        StartCoroutine(WaitForAnimation(anim));
+        anim.Play(animationNames[idx]);
     }
 
     private IEnumerator WaitForAnimation(Animation animation)
@@ -70,24 +72,30 @@ public class characterController : MonoBehaviour {
         transform.Rotate(0, Input.GetAxis("Horizontal") * rotateSpeed, 0);
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         float curSpeed = moveSpeed * Input.GetAxis("Vertical");
-        //Debug.Log(curSpeed);
         controller.SimpleMove(forward * curSpeed);
+    }
+
+    void playerDeath()
+    {
+        playAnimation(3);
     }
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         if (hit.transform.tag == "Enemy")
         {
-            //Debug.Log("Hit enemy");
-            anim.PlayQueued(animationNames[2]);
-            StartCoroutine(WaitForAnimation(anim));
-            anim.Play(animationNames[2]);
-            controller.detectCollisions = true;
+            playAnimation(2);
 
-            /*Transform chara = GetComponent<Transform>();
+            health.loseHealth(enemy1Damage);
+            if (health.checkHealth())
+            {
+                playerDeath();
+            }
+            Transform chara = GetComponent<Transform>();
             Vector3 newPosition = chara.position;
-            newPosition -= new Vector3(200f,0,200f);
-            chara.position = Vector3.Lerp(chara.position, newPosition, 0.05f);*/
+            newPosition -= new Vector3(knockback,0,knockback);
+
+            chara.position = Vector3.Lerp(chara.position, newPosition, 0.005f);
         }
     }
 }
