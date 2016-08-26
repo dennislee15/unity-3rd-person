@@ -4,8 +4,8 @@ using System.Collections;
 public class EnemyController : MonoBehaviour {
 
     public float rotateSpeed = 3.0F;
-    float maxDistance = 300f;
-    float minDistance = 70f;
+    float maxDistance = 150f;
+    float minDistance = 35f;
     public int enemy1Health;
     bool isDead;
 

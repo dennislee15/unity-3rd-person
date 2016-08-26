@@ -12,6 +12,7 @@ public class characterController : MonoBehaviour {
     Animation anim;
     CharacterController controller;
     public playerHealth health;
+    bool isAlive = true;
 
     // Use this for initialization
     void Start()
@@ -33,23 +34,26 @@ public class characterController : MonoBehaviour {
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.LeftShift))
+        if (isAlive)
         {
-            anim.Play(animationNames[4]);
-            speed = 100F;
+            if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.LeftShift))
+            {
+                anim.Play(animationNames[4]);
+                speed = 50F;
+            }
+            else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S))
+            {
+                anim.Play(animationNames[4]);
+                speed = 25F;
+            }
+            if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
+                anim.Play(animationNames[0]);
+            else if (Input.GetKeyUp(KeyCode.LeftShift))
+                speed = 25f;
+            if (Input.GetKeyDown(KeyCode.Space))
+                playAnimation(1);
+            moveCharacter(speed);
         }
-        else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S))
-        {
-            anim.Play(animationNames[4]);
-            speed = 50F;
-        }
-        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
-            anim.Play(animationNames[0]);
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
-            speed = 50f;
-        if (Input.GetKeyDown(KeyCode.Space))
-            playAnimation(1);
-        moveCharacter(speed);
     }
 
     void playAnimation(int idx)
@@ -78,6 +82,7 @@ public class characterController : MonoBehaviour {
     void playerDeath()
     {
         playAnimation(3);
+        isAlive = false;
     }
 
     void OnControllerColliderHit(ControllerColliderHit hit)
