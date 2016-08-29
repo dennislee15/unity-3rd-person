@@ -5,7 +5,7 @@ public class EnemyController : MonoBehaviour {
 
     public float rotateSpeed = 3.0F;
     float maxDistance = 150f;
-    float minDistance = 35f;
+    float minDistance = 18f;
     public int enemy1Health;
     bool isDead;
 
@@ -15,7 +15,7 @@ public class EnemyController : MonoBehaviour {
     Transform enemy;
     Transform player;
 
-    float speed = 0.005F;
+    float speed = 0.009f;
 
 	void Start () {
         anim = character.GetComponent<Animation>();
@@ -26,7 +26,6 @@ public class EnemyController : MonoBehaviour {
         {
             temp = state.name;
             animationNames[i] = temp;
-            //Debug.Log(state.name);
             i++;
         }
 	}
@@ -63,7 +62,7 @@ public class EnemyController : MonoBehaviour {
 
     void checkHealth()
     {
-        if (enemy1Health == 0)
+        if (enemy1Health <= 0)
         {
             isDead = true;
             anim.Play(animationNames[4]);
@@ -78,8 +77,15 @@ public class EnemyController : MonoBehaviour {
                 anim.Play(animationNames[3]);
                 StartCoroutine(wait());
                 enemy1Health--;
+
         }
     }
+
+    /*void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "Wall")
+            Debug.Log("wall");
+    }*/
 
     IEnumerator wait()
     {
